@@ -1,13 +1,8 @@
 package object
 
 import (
-	"bufio"
-	"fmt"
 	"github.com/disintegration/imaging"
 	"image"
-	"image/png"
-	"math/rand"
-	"os"
 )
 
 type Piece struct {
@@ -19,50 +14,6 @@ type Piece struct {
 	Orientation int
 	image       image.Image
 	Score       float64
-}
-
-var Pieces [256]*Piece
-
-func init() {
-
-	file, err := os.Open("./assets/pieces.txt")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	for i := 0; scanner.Scan(); i++ {
-
-		file, err := os.Open(fmt.Sprintf("./assets/%d.png", i+1))
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-
-		img, err := png.Decode(file)
-		if err != nil {
-			panic(err)
-		}
-
-		piece := &Piece{}
-		piece.Id = i + 1
-		piece.image = img
-		fmt.Sscanf(scanner.Text(), "%d %d %d %d", &piece.north, &piece.south, &piece.west, &piece.east)
-		Pieces[i] = piece
-	}
-}
-
-func ShufflePieces() {
-
-	rand.Seed(42)
-
-	for i := range Pieces {
-		j := rand.Intn(i + 1)
-		Pieces[i].Orientation = rand.Intn(4)
-		Pieces[i], Pieces[j] = Pieces[j], Pieces[i]
-	}
 }
 
 func (p *Piece) North() int {
