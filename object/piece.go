@@ -60,6 +60,18 @@ func (p *Piece) West() int {
 	return p.west
 }
 
+func (p *Piece) HasBorder() bool {
+	if p.north == 0 || p.east == 0 ||
+		p.south == 0 || p.west == 0 {
+		return true
+	}
+	return false
+}
+
+func (p *Piece) Rotate(angle int) {
+	p.Orientation = (p.Orientation + angle) % 4
+}
+
 func (p *Piece) Render() image.Image {
 
 	if p.Orientation == 1 {

@@ -1,10 +1,11 @@
 package main
 
 import (
-	//"fmt"
-	"github.com/vaga/goternity/object"
-	//"time"
 	"flag"
+	"fmt"
+	"github.com/vaga/goternity/object"
+	"math/rand"
+	"time"
 )
 
 var input = flag.String("in", "new", "Input file : [name].goternity")
@@ -31,18 +32,29 @@ func main() {
 		}
 	}
 
+	rand.Seed(time.Now().Unix())
+
 	// 2 - First evaluation
-	board.Evaluate()
+	bestScore := board.Evaluate()
+	try := 0
 
-	// TODO:
 	// 3 - Main loop
-	// for !board.Done() {
+	for !board.Done() {
 
-	//	fmt.Println("TODO:\n - Selection;\n - Reproduction;\n - Crossover;\n - Mutation;\n - Evaluation;\n")
-	//	time.Sleep(100 * time.Millisecond)
-	//}
+		fmt.Printf("#%d ----------\n", try)
 
-	if err := board.Render(*render); err != nil {
-		panic(err)
+		board.Random()
+		currentScore := board.Evaluate()
+
+		if currentScore > bestScore {
+
+			board.Save(*output)
+			if err := board.Render(*render); err != nil {
+				panic(err)
+			}
+			bestScore = currentScore
+		}
+		fmt.Println("-------------")
+		time.Sleep(20 * time.Millisecond)
 	}
 }

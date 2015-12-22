@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/draw"
 	"image/png"
+	"math/rand"
 	"os"
 )
 
@@ -59,39 +60,73 @@ func LoadBoard(filename string) (*Board, error) {
 	return board, nil
 }
 
-func (b *Board) Evaluate() {
+func (b *Board) Evaluate() float64 {
 
 	b.Score = 0
 
 	for y, col := range b.Pieces {
 		for x, piece := range col {
 
-			// TODO: If 2 edges == 0
+			piece.Score = 0
 
 			// North
 			if (y-1 < 0 && piece.North() == 0) ||
-				(y-1 >= 0 && b.Pieces[y-1][x].South() == piece.North()) {
+				(y-1 >= 0 && b.Pieces[y-1][x].South() == piece.North() && piece.North() != 0) {
 				piece.Score = piece.Score + 0.25
 			}
 			//East
 			if (x+1 >= BOARD_SIZE && piece.East() == 0) ||
-				(x+1 < BOARD_SIZE && b.Pieces[y][x+1].West() == piece.East()) {
+				(x+1 < BOARD_SIZE && b.Pieces[y][x+1].West() == piece.East() && piece.East() != 0) {
 				piece.Score = piece.Score + 0.25
 			}
 			//South
 			if (y+1 >= BOARD_SIZE && piece.South() == 0) ||
-				(y+1 < BOARD_SIZE && b.Pieces[y+1][x].North() == piece.South()) {
+				(y+1 < BOARD_SIZE && b.Pieces[y+1][x].North() == piece.South() && piece.South() != 0) {
 				piece.Score = piece.Score + 0.25
 			}
 			//West
 			if (x-1 < 0 && piece.West() == 0) ||
-				(x-1 >= 0 && b.Pieces[y][x-1].East() == piece.West()) {
+				(x-1 >= 0 && b.Pieces[y][x-1].East() == piece.West() && piece.West() != 0) {
 				piece.Score = piece.Score + 0.25
 			}
 			b.Score = b.Score + piece.Score
 		}
 	}
 	b.Debug()
+
+	return b.Score
+}
+
+func (b *Board) Random() {
+
+	for i := 0; i < 50; i++ {
+
+		y1 := rand.Intn(BOARD_SIZE)
+		x1 := rand.Intn(BOARD_SIZE)
+		y2 := rand.Intn(BOARD_SIZE)
+		x2 := rand.Intn(BOARD_SIZE)
+		piece1 := b.Pieces[y1][x1]
+		piece2 := b.Pieces[y2][x2]
+
+		maxPiece := 0.0
+		if piece1.Score > piece2.Score {
+			maxPiece = piece1.Score
+		} else {
+			maxPiece = piece2.Score
+		}
+
+		prob := 1 - maxPiece
+		de := float64(rand.Intn(100)) / 100
+
+		if de < prob {
+
+			if de < 0.50 {
+				b.Pieces[y1][x1].Rotate(rand.Intn(3) + 1)
+			}
+
+			b.Pieces[y1][x1], b.Pieces[y2][x2] = b.Pieces[y2][x2], b.Pieces[y1][x1]
+		}
+	}
 }
 
 func (b *Board) Done() bool {
@@ -147,5 +182,5 @@ func (b Board) Debug() {
 		}
 		fmt.Println()
 	}
-	fmt.Printf("Score : %f\n", b.Score)
+	fmt.Printf("Score : %f/%f\n", b.Score, float64(BOARD_SIZE*BOARD_SIZE))
 }

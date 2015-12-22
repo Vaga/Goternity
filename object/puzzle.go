@@ -13,7 +13,7 @@ const NB_PIECES = 256
 
 type Puzzle [256]*Piece
 
-var puzzle Puzzle
+var defaultPuzzle Puzzle
 
 func init() {
 
@@ -42,7 +42,7 @@ func init() {
 		piece.Id = i + 1
 		piece.image = img
 		fmt.Sscanf(scanner.Text(), "%d %d %d %d", &piece.north, &piece.south, &piece.west, &piece.east)
-		puzzle[i] = piece
+		defaultPuzzle[i] = piece
 	}
 }
 
@@ -50,7 +50,7 @@ func NewPuzzle() *Puzzle {
 
 	newPuzzle := new(Puzzle)
 
-	for i, piece := range puzzle {
+	for i, piece := range defaultPuzzle {
 		newPiece := new(Piece)
 		*newPiece = *piece
 		newPuzzle[i] = newPiece
@@ -77,18 +77,16 @@ func LoadPuzzle(filename string) (*Puzzle, error) {
 
 		fmt.Sscanf(scanner.Text(), "%d %d", &id, &orientation)
 		newPuzzle[i] = new(Piece)
-		*newPuzzle[i] = *puzzle[id-1]
+		*newPuzzle[i] = *defaultPuzzle[id-1]
 		newPuzzle[i].Orientation = orientation
 	}
 
 	return newPuzzle, nil
 }
 
-func (p Puzzle) Shuffle() {
+func (p *Puzzle) Shuffle() {
 
-	rand.Seed(42)
-
-	for i := range p {
+	for i := range *p {
 		j := rand.Intn(i + 1)
 		p[i].Orientation = rand.Intn(4)
 		p[i], p[j] = p[j], p[i]
