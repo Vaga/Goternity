@@ -1,10 +1,9 @@
-package object
+package puzzle
 
 import (
 	"bufio"
 	"fmt"
 	"image/png"
-	"io"
 	"math/rand"
 	"os"
 )
@@ -13,7 +12,7 @@ const NB_PIECES = 256
 
 type Puzzle [256]*Piece
 
-var defaultPuzzle Puzzle
+var DefaultPuzzle Puzzle
 
 func init() {
 
@@ -42,46 +41,21 @@ func init() {
 		piece.Id = i + 1
 		piece.image = img
 		fmt.Sscanf(scanner.Text(), "%d %d %d %d", &piece.north, &piece.south, &piece.west, &piece.east)
-		defaultPuzzle[i] = piece
+		DefaultPuzzle[i] = piece
 	}
 }
 
-func NewPuzzle() *Puzzle {
+func New() *Puzzle {
 
 	newPuzzle := new(Puzzle)
 
-	for i, piece := range defaultPuzzle {
+	for i, piece := range DefaultPuzzle {
 		newPiece := new(Piece)
 		*newPiece = *piece
 		newPuzzle[i] = newPiece
 	}
 
 	return newPuzzle
-}
-
-func LoadPuzzle(filename string) (*Puzzle, error) {
-
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	newPuzzle := new(Puzzle)
-
-	scanner := bufio.NewScanner(file)
-
-	for i := 0; scanner.Scan(); i++ {
-
-		var id, orientation int
-
-		fmt.Sscanf(scanner.Text(), "%d %d", &id, &orientation)
-		newPuzzle[i] = new(Piece)
-		*newPuzzle[i] = *defaultPuzzle[id-1]
-		newPuzzle[i].Orientation = orientation
-	}
-
-	return newPuzzle, nil
 }
 
 func (p *Puzzle) Shuffle() {
@@ -91,20 +65,4 @@ func (p *Puzzle) Shuffle() {
 		p[i].Orientation = rand.Intn(4)
 		p[i], p[j] = p[j], p[i]
 	}
-}
-
-func (p Puzzle) Save(filename string) error {
-
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	for _, piece := range p {
-		if _, err := io.WriteString(file, fmt.Sprintf("%d %d\n", piece.Id, piece.Orientation)); err != nil {
-			return err
-		}
-	}
-	return nil
 }

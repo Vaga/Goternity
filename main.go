@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"github.com/vaga/goternity/object"
+	//"fmt"
+	"github.com/vaga/goternity/population"
 	"math/rand"
+	//"runtime"
 	"time"
 )
 
@@ -16,45 +17,53 @@ func main() {
 
 	flag.Parse()
 
-	var board *object.Board
+	//runtime.GOMAXPROCS(runtime.NumCPU())
+
+	// Init the random seed
+	rand.Seed(time.Now().Unix())
+
+	// 1 - Create or load a population (Default: 100)
+	var pop *population.Population
 	var err error
 
-	// 1 - Create a population (Board)
 	if *input == "new" {
-		board, _ = object.NewBoard()
-		if err = board.Save(*output); err != nil {
-			panic(err)
-		}
+		pop = population.New(100)
 	} else {
-		board, err = object.LoadBoard(*input)
+		pop, err = population.Load(*input)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	rand.Seed(time.Now().Unix())
-
 	// 2 - First evaluation
-	bestScore := board.Evaluate()
-	try := 0
+	pop.Evaluation()
+	pop.Info()
 
 	// 3 - Main loop
-	for !board.Done() {
+	for i := 0; i < 50; i++ {
 
-		fmt.Printf("#%d ----------\n", try)
+		// !Reproduction
 
-		board.Random()
-		currentScore := board.Evaluate()
+		// Selection tournament
+		//  |->Crossover Echange de region(1st and 2nd) 0.9
+		pop.Crossover()
 
-		if currentScore > bestScore {
+		// Mutation Rotation/Swap() 0.1
+		pop.Mutation()
 
-			board.Save(*output)
-			if err := board.Render(*render); err != nil {
-				panic(err)
-			}
-			bestScore = currentScore
-		}
-		fmt.Println("-------------")
+		// Elitism
+		pop.Elitism()
+
+		// Clean
+		pop.Clean()
+
+		// Evaluation
+		pop.Evaluation()
+
 		time.Sleep(20 * time.Millisecond)
+		pop.Generation++
 	}
+
+	// Save the population
+	pop.Save(*output)
 }

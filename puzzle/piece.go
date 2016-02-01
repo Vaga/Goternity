@@ -1,4 +1,4 @@
-package object
+package puzzle
 
 import (
 	"github.com/disintegration/imaging"
