@@ -37,31 +37,32 @@ func main() {
 
 	// 2 - First evaluation
 	pop.Evaluation()
-	pop.Info()
 
 	// 3 - Main loop
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 1000; i++ {
 
 		// !Reproduction
 
 		// Selection tournament
+		pop.Selection()
 		//  |->Crossover Echange de region(1st and 2nd) 0.9
 		pop.Crossover()
 
 		// Mutation Rotation/Swap() 0.1
 		pop.Mutation()
 
-		// Elitism
-		pop.Elitism()
-
 		// Clean
 		pop.Clean()
 
 		// Evaluation
 		pop.Evaluation()
+		pop.Generation++
+		pop.Info()
+
+		// Elitism
+		pop.Elitism()
 
 		time.Sleep(20 * time.Millisecond)
-		pop.Generation++
 	}
 
 	// Save the population

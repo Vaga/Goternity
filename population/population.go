@@ -9,9 +9,11 @@ import (
 )
 
 type Population struct {
-	Generation int
-	Boards     []*board.Board
-	Score      float64
+	Generation     int
+	Boards         []*board.Board
+	SelectedBoards []*board.Board
+	Elite          *board.Board
+	Score          float64
 }
 
 func New(nb int) *Population {
@@ -19,6 +21,7 @@ func New(nb int) *Population {
 	population := &Population{
 		Generation: 0,
 		Boards:     make([]*board.Board, nb),
+		Elite:      nil,
 	}
 
 	for i := 0; i < nb; i++ {
@@ -49,6 +52,7 @@ func Load(filename string) (*Population, error) {
 	population := &Population{
 		Generation: generation,
 		Boards:     make([]*board.Board, size),
+		Elite:      nil,
 	}
 
 	// Retrieve the pieces foreach board
