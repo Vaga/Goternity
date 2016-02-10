@@ -26,22 +26,24 @@ func init() {
 
 	for i := 0; scanner.Scan(); i++ {
 
-		file, err := os.Open(fmt.Sprintf("./assets/%d.png", i+1))
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
+		func() {
+			file, err := os.Open(fmt.Sprintf("./assets/%d.png", i+1))
+			if err != nil {
+				panic(err)
+			}
+			defer file.Close()
 
-		img, err := png.Decode(file)
-		if err != nil {
-			panic(err)
-		}
+			img, err := png.Decode(file)
+			if err != nil {
+				panic(err)
+			}
 
-		piece := &Piece{}
-		piece.Id = i + 1
-		piece.image = img
-		fmt.Sscanf(scanner.Text(), "%d %d %d %d", &piece.north, &piece.south, &piece.west, &piece.east)
-		DefaultPuzzle[i] = piece
+			piece := &Piece{}
+			piece.Id = i + 1
+			piece.image = img
+			fmt.Sscanf(scanner.Text(), "%d %d %d %d", &piece.north, &piece.south, &piece.west, &piece.east)
+			DefaultPuzzle[i] = piece
+		}()
 	}
 }
 

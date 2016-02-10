@@ -18,9 +18,11 @@ $ go run main.go
 
 ```
 Usage of ./goternity:
-  -in="new": Input file : [name].goternity
-  -out="result.goternity": Output file : [name].goternity
-  -render="render.png": Render file : [name].png
+    -in="new": Input file : [name].goternity
+    -loop=100: Loop repetition : 100
+    -out="result.goternity": Output file : [name].goternity
+    -pop=100: Population size : 100
+    -render="render.png": Render file : [name].png
 ```
 
 ## Alogrithm
@@ -32,7 +34,6 @@ Evaluate each candidate
 while termination criterion has not been reached
 {
     Selection;
-    Reproduction;
     Crossover;
     Mutation;
     Evaluation;
