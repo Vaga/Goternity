@@ -13,15 +13,19 @@ type Population struct {
 	Boards         []*board.Board
 	SelectedBoards []*board.Board
 	Elite          *board.Board
+	NbCrossover    int
+	NbMutation     int
 	Score          float64
 }
 
 func New(nb int) *Population {
 
 	population := &Population{
-		Generation: 0,
-		Boards:     make([]*board.Board, nb),
-		Elite:      nil,
+		Generation:  0,
+		Boards:      make([]*board.Board, nb),
+		Elite:       nil,
+		NbCrossover: 0,
+		NbMutation:  0,
 	}
 
 	for i := 0; i < nb; i++ {
@@ -50,9 +54,11 @@ func Load(filename string) (*Population, error) {
 
 	// Create the population
 	population := &Population{
-		Generation: generation,
-		Boards:     make([]*board.Board, size),
-		Elite:      nil,
+		Generation:  generation,
+		Boards:      make([]*board.Board, size),
+		Elite:       nil,
+		NbCrossover: 0,
+		NbMutation:  0,
 	}
 
 	// Retrieve the pieces foreach board
@@ -69,9 +75,11 @@ func Load(filename string) (*Population, error) {
 func (p *Population) Info() {
 
 	fmt.Println("--- Goternity ---------")
-	fmt.Printf("- Generation  : %d\n", p.Generation)
-	fmt.Printf("- len(Boards) : %d\n", len(p.Boards))
-	fmt.Printf("- Best Score  : %f\n", p.Score)
+	fmt.Printf("- Generation      : %d\n", p.Generation)
+	fmt.Printf("- len(Boards)     : %d\n", len(p.Boards))
+	fmt.Printf("- Best Score      : %f\n", p.Score)
+	fmt.Printf("- Total mutation  : %d\n", p.NbMutation)
+	fmt.Printf("- Total crossover : %d\n", p.NbCrossover)
 	fmt.Println("-----------------------")
 }
 

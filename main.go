@@ -40,7 +40,7 @@ func main() {
 	// 2 - First evaluation
 	pop.Evaluation()
 
-	bestScore := 0.0
+	bestScore := pop.Score
 
 	// 3 - Main loop
 	for i := 0; i < *loop; i++ {

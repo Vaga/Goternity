@@ -1,10 +1,13 @@
 package population
 
 import (
+	"fmt"
 	"github.com/vaga/goternity/board"
 )
 
 func (p *Population) Elitism() {
+
+	fmt.Println("Elitism")
 
 	var worst *board.Board = nil
 	var worstId int

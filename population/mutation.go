@@ -14,6 +14,7 @@ func (p *Population) Mutation() {
 		if rand.Intn(100) < 10 {
 			fmt.Println("Mutation: Region Rotation and Swap")
 			doMutation(p.Boards[i])
+			p.NbMutation++
 		}
 	}
 }

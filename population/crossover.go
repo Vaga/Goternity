@@ -18,6 +18,7 @@ func (p *Population) Crossover() {
 		if rand.Intn(100) < 90 {
 			fmt.Println("Crossover : Region Exchange")
 			doCrossover(p.SelectedBoards[i], p.SelectedBoards[i+1])
+			p.NbCrossover++
 		}
 	}
 }
