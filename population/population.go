@@ -15,6 +15,7 @@ type Population struct {
 	Elite          *board.Board
 	NbCrossover    int
 	NbMutation     int
+	NbClean        int
 	Score          float64
 }
 
@@ -26,6 +27,7 @@ func New(nb int) *Population {
 		Elite:       nil,
 		NbCrossover: 0,
 		NbMutation:  0,
+		NbClean:     0,
 	}
 
 	for i := 0; i < nb; i++ {
@@ -59,6 +61,7 @@ func Load(filename string) (*Population, error) {
 		Elite:       nil,
 		NbCrossover: 0,
 		NbMutation:  0,
+		NbClean:     0,
 	}
 
 	// Retrieve the pieces foreach board
@@ -80,6 +83,7 @@ func (p *Population) Info() {
 	fmt.Printf("- Best Score      : %f\n", p.Score)
 	fmt.Printf("- Total mutation  : %d\n", p.NbMutation)
 	fmt.Printf("- Total crossover : %d\n", p.NbCrossover)
+	fmt.Printf("- Total clean     : %d\n", p.NbClean)
 	fmt.Println("-----------------------")
 }
 

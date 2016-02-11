@@ -4,85 +4,64 @@ import (
 	"fmt"
 	"github.com/vaga/goternity/board"
 	"github.com/vaga/goternity/puzzle"
-	"math/rand"
+	//"math/rand"
 )
 
 func (p *Population) Clean() {
 
-
-	for a := 0; a < len.(p.SelectedBoard); a++ {
-		
-		for i := 0; i < BOARD_SIZE * BOARD_SIZE, i++ {
-
-			for j := 0; j < BOARD_SIZE * BOARD_SIZE, j++ {
-	
-			//  IF   p.SelectedBoard[a].Piece[i % BOARD_SIZE][i / BOARD_SIZE] == p.SelectedBoard[a].Piece[j % BOARD_SIZE][j / BOARD_SIZE]
-			// AND I != J
-
-			}
-			j = 0;
-
-		}
-		i = 0;
-	}
-
-
 	for i := 0; i < len(p.Boards); i++ {
 
-		if rand.Intn(100) < 10 {
-			fmt.Println("Clean Population")
-			doClean(p.Boards[i])
-			p.NbMutation++
-		}
+		fmt.Println("Clean Population")
+		doClean(p.Boards[i])
+		p.NbClean++
 	}
-
 
 }
 
-func doClean (b *board.Board) {
+func doClean(b *board.Board) {
 
-	in := list.New()
-	out := list.New()
-	missing = 1;
+	missing := make(map[int]int)
+	for i := 1; i <= board.BOARD_SIZE*board.BOARD_SIZE; i++ {
+		missing[i] = i
+	}
+	unique := make(map[int]int)
+	double := make(map[int]int)
 
-	for i := 0; i < 256; i++ {
-		
-		for x := 0; x < BOARD_SIZE; x++ {
-		
-			for y = 0; y < BOARD_SIZE; y++ {
-				if (b.Pieces[x][y].Id == i)
-					missing = 0;
+	for x := 0; x < board.BOARD_SIZE; x++ {
+
+		for y := 0; y < board.BOARD_SIZE; y++ {
+
+			p := b.Pieces[y][x]
+
+			// Double ?
+			if _, ok := unique[p.Id]; ok {
+				delete(unique, p.Id)
+				double[p.Id] = p.Id
+				continue
 			}
-			y = 0;
-		}
-		x = 0; 
-		if (missing == 0) {
-			missing = 1
-			e := in.PushBack(i);
+
+			// Unique ?
+			if _, ok := missing[p.Id]; ok {
+				delete(missing, p.Id)
+				unique[p.Id] = p.Id
+				continue
+			}
+
 		}
 	}
 
-	for i := 0; i < BOARD_SIZE * BOARD_SIZE, i++ {
+	for x := 0; x < board.BOARD_SIZE; x++ {
 
-		for j := 0; j < BOARD_SIZE * BOARD_SIZE, j++ {
-	
-			if (i != j) {
+		for y := 0; y < board.BOARD_SIZE; y++ {
+			p := b.Pieces[y][x]
 
-				if (b.Pieces[i % BOARD_SIZE][i / BOARD_SIZE].Id == b.Pieces[j % BOARD_SIZE][j / BOARD_SIZE].Id) {
-					
-					e = in.Back()
-					newPiece := new(Piece)
-					*newPiece = *DefaultPuzzle[in.Back()]
-
-					b.Pieces[i % BOARD_SIZE][i / BOARD_SIZE] = newPiece
-
-					in.Remove(e)
+			if _, ok := double[p.Id]; ok {
+				for id := range missing {
+					*b.Pieces[y][x] = *puzzle.DefaultPuzzle[id-1]
+					delete(missing, id)
+					break
 				}
 			}
 		}
-		j = 0;
-
 	}
-
-	 
 }
